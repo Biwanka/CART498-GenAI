@@ -1,0 +1,1 @@
+#prompt = "Surreal Dadaist collage of an office scene, worker fully merging with office furniture, drawers and chairs growing from body, floating clocks, fishbowls, papers, and coffee cups hovering in mid-air, absurd, playful, dreamlike, whimsical, inspired by Max Ernst and Hannah Höch, collage style, detailed and chaotic, cinematic soft lighting"
