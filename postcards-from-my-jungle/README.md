@@ -6,3 +6,6 @@ I decided to make the other 50 images that I rendered as the ancestry (I found i
 For sound, I used a pre-trained diffusion audio model (Stable Audio Open). I generated multiple clips with different durations and iterated on the prompts by adding descriptive words and adjectives that evoke animal presence—things like “hollow,” “feathered,” “subterranean,” and “distant.” I selected four distinct calls that felt like separate species and kept extra variations in the sound folder. The fictional language uses a structured prompt that asked for short, phonetic phrases plus an English gloss. I generated 16 phrases and matched each to an image so the text reads like a living field guide.
 
 To improve quality, I would train longer with a larger, better labeled dataset and use higher resolution checkpoints plus an upscaler pass. Adding class conditioning by species families could reduce repetition and improve anatomy. For audio, I would test longer generation windows, higher fidelity models, and do light post‑processing (EQ, reverb, noise shaping) to deepen the environment. For language, I would fix a phoneme inventory and grammar template so phrases become more consistent across the ecosystem.
+
+website : https://biwanka.github.io/CART498-GenAI/postcards-from-my-jungle/ 
+Github : https://github.com/Biwanka/CART498-GenAI/tree/main/postcards-from-my-jungle 
