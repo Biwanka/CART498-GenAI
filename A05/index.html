@@ -1,78 +1,340 @@
-<!DOCTYPE html>
-<html>
+﻿<!doctype html>
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dream Oracle</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Postcards From My Jungle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Space+Grotesk:wght@300;400;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-    <div class="sky" aria-hidden="true">
-        <div class="cloud c1"></div>
-        <div class="cloud c2"></div>
-        <div class="cloud c3"></div>
-        <div class="cloud c4"></div>
-        <div class="cloud c5"></div>
-        <div class="cloud c6"></div>
-        <div class="cloud c7"></div>
-    </div>
-    <div class="stars" aria-hidden="true">
-        <span class="star s1"></span>
-        <span class="star s2"></span>
-        <span class="star s3"></span>
-        <span class="star s4"></span>
-        <span class="star s5"></span>
-        <span class="star s6"></span>
-        <span class="star s7"></span>
-        <span class="star s8"></span>
-        <span class="star s9"></span>
-        <span class="star s10"></span>
-        <span class="star s11"></span>
-        <span class="star s12"></span>
-        <span class="star s13"></span>
-        <span class="star s14"></span>
-        <span class="star s15"></span>
-    </div>
-    <div class="dream-container">
-        <h1>Dream Oracle</h1>
+  <div class="mist" aria-hidden="true"></div>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="leaves" aria-hidden="true">
+    <div class="leaf leaf-a"></div>
+    <div class="leaf leaf-b"></div>
+    <div class="leaf leaf-c"></div>
+    <div class="leaf leaf-d"></div>
+  </div>
 
-        <form method="POST">
-            <div class="mb-3">
-                <textarea name="prompt" rows="4" class="form-control"
-                    placeholder="Describe your dream. Describe what you saw, felt, or feared..."></textarea>
+  <main class="shell">
+        <header>
+            <div>
+                <div class="badge">Lo-fi GenAI Jungle</div>
+                <h1 class="title">Postcards From My Jungle</h1>
+                <p class="subtitle">A fictional ecosystem stitched together from diffusion-trained creatures,
+                    synthesized calls, and a new language whispered in the canopy.</p>
             </div>
-            <div class="d-grid">
-                <input type="submit" value="Interpret Dream" class="btn btn-primary">
-            </div>
-        </form>
-        <p id="loading" style="display:none;text-align:center;margin-top:10px;">
-            Consulting the unconscious…
-        </p>
+        </header>
 
-
-        {% if result %}
-        <div class="result-box">
-            <h4>Interpretation</h4>
-            <p>{{ result }}</p>
-
-            {% if image_url %}
-            <img src="{{ image_url }}">
-            {% endif %}
+        <section class="stage">
+            <div class="viewer">
+                <img id="animalImage" src="images/animal_00.png" alt="Imagined jungle creature" />
+        <div class="caption">
+          <h2 id="animalName">Tangleback Nuru</h2>
+          <p class="phrase" id="animalPhrase">Saru-vi na'tal om.</p>
+          <p class="meaning" id="animalMeaning">The vine remembers the path.</p>
         </div>
-        {% endif %}
-    </div>
+        <div class="ancestry" id="ancestry">
+          <div class="ancestry-label">Ancestry (low-res relics)</div>
+          <div class="ancestry-row">
+            <img id="anc1" src="images/animal_different_50/animal_00.png" alt="Ancestry image 1" />
+            <span class="arrow">-></span>
+            <img id="anc2" src="images/animal_different_50/animal_01.png" alt="Ancestry image 2" />
+            <span class="arrow">-></span>
+            <img id="anc3" src="images/animal_different_50/animal_02.png" alt="Ancestry image 3" />
+          </div>
+          <div class="ancestry-note">64x64 diffusion lineage</div>
+        </div>
+      </div>
+
+            <aside class="panel">
+                <div class="controls">
+          <div class="btn-row">
+            <button id="prevBtn">Previous</button>
+            <button id="nextBtn">Next</button>
+            <button id="ancestryBtn">Reveal Ancestry</button>
+          </div>
+                    <div class="btn-row">
+                        <button id="playBtn" class="primary">Play Sound</button>
+                        <label class="toggle">
+                            <input id="autoToggle" type="checkbox" />
+                            Auto-travel
+                        </label>
+                    </div>
+                </div>
+
+                <ul class="meta">
+                    <li><span>Specimen</span><span id="animalIndex">1 / 16</span></li>
+                    <li><span>Region</span><span id="animalRegion">Lower Canopy</span></li>
+                    <li><span>Temper</span><span id="animalTemper">Curious</span></li>
+                </ul>
+
+                <div class="sound">
+                    <div>Sound source</div>
+                    <strong id="soundLabel">animal_roar.wav</strong>
+                </div>
+            </aside>
+        </section>
+
+        <footer>Generated images and sounds, curated into a fictional atlas. Click Play Sound to hear each creature.
+        </footer>
+    </main>
+
+    <audio id="animalAudio" preload="auto"></audio>
 
     <script>
-        document.querySelector("form").addEventListener("submit", () => {
-            document.getElementById("loading").style.display = "block";
-        });
-    </script>
+        const entries = [
+            {
+                name: "Tangleback Nuru",
+                image: "images/animal_00.png",
+                phrase: "Saru-vi na'tal om.",
+                meaning: "The vine remembers the path.",
+                region: "Lower Canopy",
+                temper: "Curious",
+                sound: "sounds/animal_roar.wav",
+                soundLabel: "animal_roar.wav"
+            },
+            {
+                name: "Glasswing Tuma",
+                image: "images/animal_01.png",
+                phrase: "Heshi koru laa.",
+                meaning: "Rain is the jungle's breath.",
+                region: "Mist Ridge",
+                temper: "Alert",
+                sound: "sounds/exotic_bird.wav",
+                soundLabel: "exotic_bird.wav"
+            },
+            {
+                name: "Mossjaw Leno",
+                image: "images/animal_02.png",
+                phrase: "Gala toru emen.",
+                meaning: "The stone drinks slow light.",
+                region: "Stone Flats",
+                temper: "Patient",
+                sound: "sounds/mysterious_growl.wav",
+                soundLabel: "mysterious_growl.wav"
+            },
+            {
+                name: "Ribboned Yari",
+                image: "images/animal_03.png",
+                phrase: "Voku sai imira.",
+                meaning: "We gather where the river folds.",
+                region: "River Bend",
+                temper: "Social",
+                sound: "sounds/monkey_chatter.wav",
+                soundLabel: "monkey_chatter.wav"
+            },
+            {
+                name: "Hollowcrest Nemi",
+                image: "images/animal_04.png",
+                phrase: "Rumu taen ava.",
+                meaning: "Footprints settle like ash.",
+                region: "Ash Basin",
+                temper: "Wary",
+                sound: "sounds/animal_roar.wav",
+                soundLabel: "animal_roar.wav"
+            },
+            {
+                name: "Lanternscale Ora",
+                image: "images/animal_05.png",
+                phrase: "Nari solum ket.",
+                meaning: "Night blooms on the back of scale.",
+                region: "Glow Marsh",
+                temper: "Gentle",
+                sound: "sounds/exotic_bird.wav",
+                soundLabel: "exotic_bird.wav"
+            },
+            {
+                name: "Riverthread Saki",
+                image: "images/animal_06.png",
+                phrase: "Kalu mira sali.",
+                meaning: "We follow the humming water.",
+                region: "Silver Delta",
+                temper: "Restless",
+                sound: "sounds/mysterious_growl.wav",
+                soundLabel: "mysterious_growl.wav"
+            },
+            {
+                name: "Embermane Vori",
+                image: "images/animal_07.png",
+                phrase: "Tera bun oshi.",
+                meaning: "The dusk hides warm teeth.",
+                region: "Burnt Thicket",
+                temper: "Bold",
+                sound: "sounds/monkey_chatter.wav",
+                soundLabel: "monkey_chatter.wav"
+            },
+            {
+                name: "Plumehorn Suri",
+                image: "images/animal_08.png",
+                phrase: "Iri nuv enna.",
+                meaning: "Feathers carry the sun home.",
+                region: "Sky Shelf",
+                temper: "Bright",
+                sound: "sounds/animal_roar.wav",
+                soundLabel: "animal_roar.wav"
+            },
+            {
+                name: "Wetleaf Koro",
+                image: "images/animal_09.png",
+                phrase: "Sena latu mer.",
+                meaning: "Silence tastes of green fruit.",
+                region: "Rain Bowl",
+                temper: "Shy",
+                sound: "sounds/exotic_bird.wav",
+                soundLabel: "exotic_bird.wav"
+            },
+            {
+                name: "Spiraltooth Omi",
+                image: "images/animal_10.png",
+                phrase: "Daka ven ruu.",
+                meaning: "The spiral knows the hunt.",
+                region: "Hollow Grove",
+                temper: "Focused",
+                sound: "sounds/mysterious_growl.wav",
+                soundLabel: "mysterious_growl.wav"
+            },
+            {
+                name: "Cloudtail Jara",
+                image: "images/animal_11.png",
+                phrase: "Yoru han seke.",
+                meaning: "We sleep in drifting mist.",
+                region: "Cloud Reach",
+                temper: "Dreamy",
+                sound: "sounds/monkey_chatter.wav",
+                soundLabel: "monkey_chatter.wav"
+            },
+            {
+                name: "Thorncoil Vesa",
+                image: "images/animal_12.png",
+                phrase: "Kiri tom yasa.",
+                meaning: "The thorn sings when touched.",
+                region: "Briar Spine",
+                temper: "Defensive",
+                sound: "sounds/animal_roar.wav",
+                soundLabel: "animal_roar.wav"
+            },
+            {
+                name: "Sunmoss Lira",
+                image: "images/animal_13.png",
+                phrase: "Oru penzi nela.",
+                meaning: "Light nests in moss fields.",
+                region: "Sun Glade",
+                temper: "Calm",
+                sound: "sounds/exotic_bird.wav",
+                soundLabel: "exotic_bird.wav"
+            },
+            {
+                name: "Riftcall Zunu",
+                image: "images/animal_14.png",
+                phrase: "Mavo senta qi.",
+                meaning: "A cry opens the ridge.",
+                region: "Split Ridge",
+                temper: "Echoing",
+                sound: "sounds/mysterious_growl.wav",
+                soundLabel: "mysterious_growl.wav"
+            },
+            {
+                name: "Cinderpaw Osa",
+                image: "images/animal_15.png",
+                phrase: "Veli toru mi.",
+                meaning: "We leave warm ash behind.",
+                region: "Cinder Trail",
+                temper: "Steady",
+                sound: "sounds/monkey_chatter.wav",
+                soundLabel: "monkey_chatter.wav"
+            }
+        ];
 
+        let index = 0;
+        let autoTimer = null;
+
+    const imageEl = document.getElementById("animalImage");
+    const nameEl = document.getElementById("animalName");
+    const phraseEl = document.getElementById("animalPhrase");
+    const meaningEl = document.getElementById("animalMeaning");
+    const indexEl = document.getElementById("animalIndex");
+    const regionEl = document.getElementById("animalRegion");
+    const temperEl = document.getElementById("animalTemper");
+    const soundLabelEl = document.getElementById("soundLabel");
+    const audioEl = document.getElementById("animalAudio");
+    const ancestryBtn = document.getElementById("ancestryBtn");
+    const anc1El = document.getElementById("anc1");
+    const anc2El = document.getElementById("anc2");
+    const anc3El = document.getElementById("anc3");
+
+    const ancestryPool = Array.from({ length: 50 }, (_, i) => {
+      const id = String(i).padStart(2, "0");
+      return `images/animal_different_50/animal_${id}.png`;
+    });
+
+    function getAncestry(i) {
+      const start = (i * 3) % ancestryPool.length;
+      return [
+        ancestryPool[start],
+        ancestryPool[(start + 1) % ancestryPool.length],
+        ancestryPool[(start + 2) % ancestryPool.length]
+      ];
+    }
+
+    function renderEntry() {
+      const entry = entries[index];
+      imageEl.src = entry.image;
+      nameEl.textContent = entry.name;
+      phraseEl.textContent = entry.phrase;
+      meaningEl.textContent = entry.meaning;
+      regionEl.textContent = entry.region;
+      temperEl.textContent = entry.temper;
+      soundLabelEl.textContent = entry.soundLabel;
+      indexEl.textContent = `${index + 1} / ${entries.length}`;
+      audioEl.src = entry.sound;
+      const [a1, a2, a3] = getAncestry(index);
+      anc1El.src = a1;
+      anc2El.src = a2;
+      anc3El.src = a3;
+    }
+
+        function nextEntry() {
+            index = (index + 1) % entries.length;
+            renderEntry();
+        }
+
+        function prevEntry() {
+            index = (index - 1 + entries.length) % entries.length;
+            renderEntry();
+        }
+
+        document.getElementById("nextBtn").addEventListener("click", nextEntry);
+    document.getElementById("prevBtn").addEventListener("click", prevEntry);
+    document.getElementById("playBtn").addEventListener("click", () => {
+      audioEl.currentTime = 0;
+      audioEl.play();
+    });
+    ancestryBtn.addEventListener("click", () => {
+      document.body.classList.toggle("show-ancestry");
+      ancestryBtn.textContent = document.body.classList.contains("show-ancestry")
+        ? "Hide Ancestry"
+        : "Reveal Ancestry";
+    });
+
+        document.getElementById("autoToggle").addEventListener("change", (event) => {
+            if (event.target.checked) {
+                autoTimer = setInterval(nextEntry, 7000);
+            } else if (autoTimer) {
+                clearInterval(autoTimer);
+                autoTimer = null;
+            }
+        });
+
+        renderEntry();
+    </script>
 </body>
 
 </html>
