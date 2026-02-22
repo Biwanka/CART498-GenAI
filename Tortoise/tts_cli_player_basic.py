@@ -1,7 +1,7 @@
 ﻿# tts_cli_player_basic.py
 
 # conda activate tortoise
-# cd "c:\Users\gauth\OneDrive\Desktop\Cart 498\tortoise-tts"
+# cd "C:\Users\gauth\OneDrive\Desktop\GitHub\CART498-GenAI\Tortoise"
 # $env:PYTHONPATH = "$PWD;$PWD\tortoise"
 # pip install sounddevice
 # python tts_cli_player_basic.py
