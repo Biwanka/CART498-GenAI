@@ -6,6 +6,19 @@
 # pip install sounddevice
 # python tts_cli_player_basic.py
 
+# Warm‑up (one‑time)
+
+# & "C:\Users\gauth\AppData\Local\Programs\Ollama\ollama.exe" run llama3.2:1b "Say hello"
+# Warm‑up Tortoise
+
+# conda activate tortoise
+# cd "C:\Users\gauth\OneDrive\Desktop\GitHub\CART498-GenAI\Tortoise"
+# $env:PYTHONPATH = "$PWD;$PWD\tortoise"
+# python tts_cli_player_basic.py
+
+
+
+
 import torch
 import sounddevice as sd
 

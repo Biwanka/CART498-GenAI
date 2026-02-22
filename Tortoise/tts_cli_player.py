@@ -1,9 +1,10 @@
 ﻿# tts_cli_player.py
 
+# reads what i write and speaks it out loud using Tortoise TTS
 
 # conda activate tortoise
 # cd "C:\Users\gauth\OneDrive\Desktop\GitHub\CART498-GenAI\Tortoise"
-# $env:PYTHONPATH = "$PWD;$PWD\tortoise"how are you
+# $env:PYTHONPATH = "$PWD;$PWD\tortoise"
 # pip install sounddevice
 # python tts_cli_player.py
 
