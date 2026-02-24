@@ -1,4 +1,10 @@
 # tts_cli_player_llm_memory.py
+
+# What it does:
+
+# Keeps the last 3 turns of conversation
+# Feeds them into Ollama
+# NPC replies with context (“memory”)
 #
 # LLM + TTS with short-term memory (last 3 turns)
 # Requires Ollama installed: https://ollama.com/download
@@ -11,7 +17,7 @@
 # python tts_cli_player_llm_memory.py
 
 import subprocess
-from collections import deque
+from collections import deque, defaultdict
 
 import torch
 import sounddevice as sd
@@ -22,7 +28,12 @@ from tortoise.utils.audio import load_voices
 MODEL = "llama3.2:1b"
 OLLAMA_EXE = r"C:\Users\gauth\AppData\Local\Programs\Ollama\ollama.exe"
 
-VOICE = "train_dotrice"
+VOICE_MAP = {
+    "narrator": "train_dotrice",
+    "merchant": "train_lescault",
+    "guard": "train_empire",
+    "healer": "train_grace",
+}
 
 SYSTEM_PROMPT = (
     "You are an NPC in a fantasy RPG. Reply with 1 short sentence, "
@@ -30,20 +41,41 @@ SYSTEM_PROMPT = (
 )
 
 MEMORY_TURNS = 3
-history = deque(maxlen=MEMORY_TURNS)
+history_by_role = defaultdict(lambda: deque(maxlen=MEMORY_TURNS * 2))
+quest_state_by_role = defaultdict(lambda: "not started")
 
 
-def build_prompt(user_text: str) -> str:
-    lines = [SYSTEM_PROMPT, "Conversation:"]
-    for turn in history:
+def parse_role_and_text(raw: str):
+    if ":" in raw:
+        role, text = raw.split(":", 1)
+        return role.strip().lower(), text.strip()
+    return "narrator", raw.strip()
+
+
+def update_quest_state(role: str, user_text: str):
+    text = user_text.lower()
+    if any(k in text for k in ["quest", "help me", "job", "task"]):
+        quest_state_by_role[role] = "started"
+    if any(k in text for k in ["completed", "done", "finished"]):
+        quest_state_by_role[role] = "completed"
+
+
+def build_prompt(role: str, user_text: str) -> str:
+    state = quest_state_by_role[role]
+    lines = [
+        SYSTEM_PROMPT,
+        f"NPC role: {role}. Quest state: {state}.",
+        "Conversation:",
+    ]
+    for turn in history_by_role[role]:
         lines.append(turn)
     lines.append(f"Player: {user_text}")
     lines.append("NPC:")
     return "\n".join(lines).strip()
 
 
-def generate_with_ollama(user_text: str) -> str:
-    prompt = build_prompt(user_text)
+def generate_with_ollama(role: str, user_text: str) -> str:
+    prompt = build_prompt(role, user_text)
     try:
         result = subprocess.run(
             [OLLAMA_EXE, "run", MODEL, prompt],
@@ -65,7 +97,10 @@ def generate_with_ollama(user_text: str) -> str:
 def main():
     tts = TextToSpeech(use_deepspeed=False, kv_cache=True, half=True)
     print(f"CUDA available: {torch.cuda.is_available()}")
-    print("Memory mode ON (last 3 turns). Type 'quit' to exit.")
+    print("Memory mode ON (last 3 turns per role). Type 'quit' to exit.")
+    print("Use 'role: message' (e.g., 'merchant: hello').")
+    print("Commands: /reset (all), /reset <role>")
+    print(f"Roles: {', '.join(VOICE_MAP.keys())}")
 
     while True:
         try:
@@ -78,17 +113,34 @@ def main():
         if text.lower() in {"quit", "exit"}:
             print("Exiting.")
             break
+        if text.startswith("/reset"):
+            parts = text.split()
+            if len(parts) == 1:
+                history_by_role.clear()
+                quest_state_by_role.clear()
+                print("All memory cleared.")
+            else:
+                role = parts[1].lower()
+                history_by_role.pop(role, None)
+                quest_state_by_role.pop(role, None)
+                print(f"Memory cleared for role: {role}")
+            continue
 
+        role, user_text = parse_role_and_text(text)
+        update_quest_state(role, user_text)
+        voice = VOICE_MAP.get(role, VOICE_MAP["narrator"])
+
+        print(f"Role: {role} | Voice: {voice} | Quest: {quest_state_by_role[role]}")
         print("Thinking...")
-        reply = generate_with_ollama(text)
+        reply = generate_with_ollama(role, user_text)
         print(f"NPC: {reply}")
 
         # Update memory
-        history.append(f"Player: {text}")
-        history.append(f"NPC: {reply}")
+        history_by_role[role].append(f"Player: {user_text}")
+        history_by_role[role].append(f"NPC: {reply}")
 
         print("Speaking...")
-        voice_samples, _ = load_voices([VOICE])
+        voice_samples, _ = load_voices([voice])
         audio = tts.tts(
             reply,
             voice_samples=voice_samples,
