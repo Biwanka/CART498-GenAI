@@ -1,6 +1,6 @@
 ﻿# XTTS + Ollama with role memory + quest state + reset commands
 #
-# conda activate tortoise
+# conda activate xtts
 # cd "C:\Users\gauth\OneDrive\Desktop\GitHub\CART498-GenAI\TTS"
 # pip install TTS sounddevice
 # python tts_cli_player_llm_memory.py
